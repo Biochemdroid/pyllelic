@@ -16,7 +16,7 @@ def fasta_output(seq: str, seq_name: str, line: int = None) -> str:
     Returns:
         str: fasta-formatted text file contents.
     """
-    line = line or MAX_LINE_LENGTH
+    # line = ling or MAX_LINE_LENGTH
 
     seq = re.sub(r"[0-9]| |\t|\n|\r|\f", "", seq)
 
@@ -26,6 +26,35 @@ def fasta_output(seq: str, seq_name: str, line: int = None) -> str:
     return f">{seq_name}\n{seq}"
 
 
+
+
+def check_char_in_allowed(seq: str, pattern: str) -> str:
+    """Return only charcters in string present in pattern.
+
+    Args:
+        seq (str): sequence string
+        patt (str): string of allowed characters
+
+    Returns:
+        str: string with unallowed characters removed.
+    """
+    new = ""
+    for each in seq:
+        if each in pattern:
+            new += each
+    return new
+
+    
+def curate_seq(seq: str) -> str:
+    """Curate a sequence to only have allowed characters.
+
+    Args:
+        seq (str): sequence to check.
+
+    Returns:
+        str: sequence without dis-allowed characters.
+    """
+    return check_char_in_allowed(seq, "ACGTURYMWSKDHBVNacgturymwskdhbvn")
 
 def parse_seq(seq: str) -> str:
     """Extract sequence strings from the string of a text file.
@@ -66,6 +95,51 @@ def parse_seq(seq: str) -> str:
         _ = seq
 
     return curate_seq(seq)
+
+
+def multi_fasta_parse(multi: Any) -> List[Dict[str, str]]:
+    """Find all bisufite sequencing reads in a fasta file,
+       and return as a dictionary.
+
+    Args:
+        multi (Any): multi-line sequence string
+
+    Returns:
+        List[Dict[str, str]]: list of dictionaries of sequence reads
+    """
+    multi = re.sub(r"\r\n", "\n", multi)
+    multi = re.sub(r"\r", "\n", multi)
+    biseq: List[Dict[str, str]] = []
+    fa: Dict[str, str] = {}
+
+    multi = re.findall(r"(.*)$", multi, re.MULTILINE)
+
+    for line in multi:
+
+        if ">" in line:
+            if fa and not fa["seq"]:  # pragma: no cover
+                biseq.pop()
+            fa = {"com": line}
+            fa["com"] = re.sub(r"^>", "", fa["com"])
+            fa["com"] = re.sub(r"\s*$", "", fa["com"])
+            biseq.append(fa)
+        else:
+            line = curate_seq(line)
+            if line == "":
+                continue
+            if not fa:  # pragma: no cover
+                return None  # does this ever happen?
+            try:
+                fa["seq"] += line.upper()
+            except KeyError:
+                fa["seq"] = line.upper()
+
+    if fa:
+        if not fa.get("seq"):  # pragma: no cover
+            biseq.pop()
+
+    return biseq
+
 
 
 def parse_genome(file: str) -> str:
@@ -141,7 +215,7 @@ def cpg_main(gfile: str, qfile: str) -> str:
 
 
 
-all_combos = generate_seq_combinations(gseq, qseq)
+
 
 
 
@@ -152,11 +226,15 @@ SeqPair = namedtuple("SeqPair", ["genomic_Seq", "query_Seq"])
 SeqAlignments = namedtuple("SeqAlignments", ["Both_Fwd", "G_fwd_Q_rev", "G_rev_Q_fwd"])
 CpG_Counts = namedtuple("CpG_Counts", ["counts", "cpg_dict", "quma"])
 
+
+
 def generate_seq_combinations(g_seq: Seq, q_seq: Seq) -> SeqAlignments:
     both_fwd = SeqPair(g_seq, q_seq)
     g_fwd_q_rev = SeqPair(g_seq, q_seq.reverse_complement())
     g_rev_q_fwd = SeqPair(g_seq.reverse_complement(), q_seq)
     return SeqAlignments(both_fwd, g_fwd_q_rev, g_rev_q_fwd)
+
+
 
 def find_cpgs(seq):
     return [x.start() for x in list(re.finditer("CG", str(seq)))]   
@@ -195,3 +273,4 @@ def find_cpg(all_combos):
 
     return find_best_dict[best]
 
+#all_combos = generate_seq_combinations(gseq, qseq)

@@ -21,6 +21,7 @@ from scipy import stats
 from tqdm.notebook import tqdm
 
 # from . import quma
+from . import cpg
 from .config import Config
 
 import logging
@@ -336,7 +337,7 @@ def access_cpg(directory: Path, genomic_seq_file: str, reads_seq_file: str) -> s
     Returns:
         str: output from quma command
     """
-    result = quma.quma_main(
+    result = cpg.cpg_main(
         f"{directory}/{genomic_seq_file}", f"{directory}/{reads_seq_file}"
     )
     return result

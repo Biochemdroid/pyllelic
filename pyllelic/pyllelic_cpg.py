@@ -360,7 +360,7 @@ def _thread_worker(folder: Path, read_name: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: dataframe of quma results
     """
-    quma_result: str = access_quma(folder, f"g_{read_name}.txt", f"{read_name}.txt")
+    quma_result: str = access_cpg(folder, f"g_{read_name}.txt", f"{read_name}.txt")
     processed_quma: List[str] = process_raw_quma(quma_result)
     # Next, add this readname to the holding data frame
     int_df: pd.DataFrame = pd.DataFrame({read_name: processed_quma})
@@ -472,7 +472,7 @@ def extract_cell_types(file_sets: List[str]) -> List[str]:
     return [file.split("_")[1] for file in file_sets]
 
 
-def run_quma_and_compile_list_of_df(
+def run_cpg_and_compile_list_of_df(
     cell_types: List[str], filename: str, run_quma: bool = True
 ) -> Dict[str, pd.DataFrame]:
     """Wrapper to run QUMA on all cell lines in the dataset and write output file.

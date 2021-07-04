@@ -295,7 +295,7 @@ def genome_parsing(subfolders: List[Path] = None) -> None:
         genome_base = f.readlines()
         genome_base_lines: List[str] = [s.rstrip("\n") for s in genome_base]
         genome_string: str = "".join(map(str, genome_base_lines))
-
+       
     # Wrap everything in processing them one at a time
     for folder in tqdm(subfolders, desc="Cell Lines: "):
         _process_genome_parsing(folder, genome_string)
@@ -311,7 +311,8 @@ def _process_genome_parsing(folder: Path, genome_string: str) -> None:
         if not i.lstrip().startswith("g")
         and not i.lstrip().startswith(".ip")
         and not i.lstrip().startswith(".DS")  # mac .DS_store files
-    ]  # replace with regex?
+    ] 
+     # replace with regex?
 
     # Now, process each file:
     for read_name in read_files:
@@ -319,12 +320,13 @@ def _process_genome_parsing(folder: Path, genome_string: str) -> None:
         # Grab the genomic sequence
         file_lines.append(str(">genome" + str(read_name)))
         file_lines.append(str(genome_range(read_name, genome_string)))
+        print(file_lines)
+        
 
         # Save the reads as a text file for each position
         with open(folder.joinpath(f"g_{read_name}.txt"), "w") as file_handler:
             for item in file_lines:
                 file_handler.write(f"{item}\n")
-
 
 def access_cpg(directory: Path, genomic_seq_file: str, reads_seq_file: str) -> str:
     """Helper function to run internal QUMA tool.
@@ -337,6 +339,8 @@ def access_cpg(directory: Path, genomic_seq_file: str, reads_seq_file: str) -> s
     Returns:
         str: output from quma command
     """
+
+
     result = cpg.cpg_main(
         f"{directory}/{genomic_seq_file}", f"{directory}/{reads_seq_file}"
     )
@@ -473,7 +477,7 @@ def extract_cell_types(file_sets: List[str]) -> List[str]:
 
 
 def run_cpg_and_compile_list_of_df(
-    cell_types: List[str], filename: str, run_quma: bool = True
+    cell_types: List[str], filename: str
 ) -> Dict[str, pd.DataFrame]:
     """Wrapper to run QUMA on all cell lines in the dataset and write output file.
 

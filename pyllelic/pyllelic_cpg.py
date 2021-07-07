@@ -180,7 +180,7 @@ def run_sam_and_extract_df(sams: Path, process: bool = True) -> pd.Index:
         cols = str(x).split()
         position.append(cols[3])
         sequence.append(cols[9])
-
+        
     df: pd.DataFrame = pd.DataFrame(
         list(zip(position, sequence)), columns=["positions", "sequence"]
     )
@@ -192,7 +192,7 @@ def run_sam_and_extract_df(sams: Path, process: bool = True) -> pd.Index:
 
     if process:
         write_bam_output_files(sams, df2.index.unique(), df3)
-
+    
     return df2.index.unique()
 
 
@@ -295,6 +295,7 @@ def genome_parsing(subfolders: List[Path] = None) -> None:
         genome_base = f.readlines()
         genome_base_lines: List[str] = [s.rstrip("\n") for s in genome_base]
         genome_string: str = "".join(map(str, genome_base_lines))
+        
        
     # Wrap everything in processing them one at a time
     for folder in tqdm(subfolders, desc="Cell Lines: "):
@@ -322,12 +323,12 @@ def _process_genome_parsing(folder: Path, genome_string: str) -> None:
         file_lines.append(str(genome_range(read_name, genome_string)))
         print(file_lines)
         
+        
 
         # Save the reads as a text file for each position
         with open(folder.joinpath(f"g_{read_name}.txt"), "w") as file_handler:
             for item in file_lines:
                 file_handler.write(f"{item}\n")
-
 def access_cpg(directory: Path, genomic_seq_file: str, reads_seq_file: str) -> str:
     """Helper function to run internal QUMA tool.
 

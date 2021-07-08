@@ -19,6 +19,7 @@ import pysam
 from Bio import pairwise2
 from scipy import stats
 from tqdm.notebook import tqdm
+import pysam
 
 # from . import quma
 from . import cpg
@@ -80,7 +81,9 @@ def main() -> None:
 
     files_set: List[str] = make_list_of_bam_files()
     positions: List[str] = index_and_fetch(files_set)
+
     genome_parsing()
+
     cell_types: List[str] = extract_cell_types(files_set)
     df_list: Dict[str, pd.DataFrame] = run_cpg_and_compile_list_of_df(
         cell_types, filename
@@ -184,16 +187,27 @@ def run_sam_and_extract_df(sams: Path, process: bool = True) -> pd.Index:
     df: pd.DataFrame = pd.DataFrame(
         list(zip(position, sequence)), columns=["positions", "sequence"]
     )
-
+    
     df2: pd.DataFrame = df.set_index("positions")
+
+    df2_5: pd.DataFrame = df.set_index("sequence")
     # will set the inital index (on the leftmost column) to be position
     df3: pd.DataFrame = df2.stack()
     # if confused, see: https://www.w3resource.com/pandas/dataframe/dataframe-stack.php
 
     if process:
         write_bam_output_files(sams, df2.index.unique(), df3)
-    
-    return df2.index.unique()
+
+
+
+    dict_df = df.values.tolist()
+    # print(dict_df)
+
+
+    # return df2.index.unique()
+    return dict_df.unique()
+
+
 
 
 def write_bam_output_files(sams: Path, positions: List[str], df: pd.DataFrame) -> None:
@@ -277,7 +291,6 @@ def pysam_index(bamfile: Path) -> bool:
     Returns:
         bool: verification of samtools command, usually discarded
     """
-
     pysam.index(os.fspath(bamfile))
 
     return True

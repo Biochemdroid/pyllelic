@@ -198,14 +198,23 @@ def run_sam_and_extract_df(sams: Path, process: bool = True) -> pd.Index:
     if process:
         write_bam_output_files(sams, df2.index.unique(), df3)
 
+    # from collections import OrderedDict, defaultdict
 
+    dict_df = df.to_dict()
+    # print(dict_df["positions"])
+    seq_dict = dict_df['sequence']
+    print(seq_dict)
+    for i in enumerate(seq_dict.items()):
+        print (i)
 
-    dict_df = df.values.tolist()
-    # print(dict_df)
+    # for i in dict_df['sequence']:
+    #     print (dict_df[i])
+    # list_dict_df = list(dict_df.items())
+    # print(list_dict_df[0])
 
 
     # return df2.index.unique()
-    return dict_df.unique()
+    return df
 
 
 

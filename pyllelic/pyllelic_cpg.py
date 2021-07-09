@@ -155,6 +155,10 @@ def index_and_fetch(files_set: List[str], process: bool = True) -> List[str]:
 
 
 def run_sam_and_extract_df(sams: Path, process: bool = True) -> pd.Index:
+ 
+    import Bio
+    from Bio.Seq import Seq
+
     """Process samfiles, pulling out sequence and position data
     and writing to folders/files.
 
@@ -190,7 +194,7 @@ def run_sam_and_extract_df(sams: Path, process: bool = True) -> pd.Index:
     
     df2: pd.DataFrame = df.set_index("positions")
 
-    df2_5: pd.DataFrame = df.set_index("sequence")
+    # df2_5: pd.DataFrame = df.set_index("sequence")
     # will set the inital index (on the leftmost column) to be position
     df3: pd.DataFrame = df2.stack()
     # if confused, see: https://www.w3resource.com/pandas/dataframe/dataframe-stack.php
@@ -200,21 +204,37 @@ def run_sam_and_extract_df(sams: Path, process: bool = True) -> pd.Index:
 
     # from collections import OrderedDict, defaultdict
 
-    dict_df = df.to_dict()
-    # print(dict_df["positions"])
-    seq_dict = dict_df['sequence']
-    print(seq_dict)
-    for i in enumerate(seq_dict.items()):
-        print (i)
+    # dict_df = df.to_dict()
+    # # print(dict_df["positions"])
+    # seq_dict = dict_df['sequence']
+    # # print(seq_dict)
+    # for i in enumerate(seq_dict.items()):
+    #     print (i)
 
     # for i in dict_df['sequence']:
     #     print (dict_df[i])
     # list_dict_df = list(dict_df.items())
     # print(list_dict_df[0])
+    
 
+
+
+
+#START HERE NEXT TIME!!!!!!
+#TRYING TO GET THESE Seq(v) into cpg.find_cpt()
+    df2_dict = df2.to_dict()
+
+    dff = df2_dict['sequence'].items()
+    for k, v in dff:
+        print((Seq(v)))
+    # for i in df2_dict['sequence']:
+    #     print(df2_dict[i])
 
     # return df2.index.unique()
-    return df
+    return df3
+
+
+
 
 
 

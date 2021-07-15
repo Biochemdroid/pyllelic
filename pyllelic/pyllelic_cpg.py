@@ -533,12 +533,13 @@ def run_cpg_and_compile_list_of_df(
         Dict[str, pd.DataFrame]: dataframe of quma results
     """
 
-    if run_quma:
-        quma_full_threaded(cell_types, filename)  # Changed for multiprocessing of quma
+    # if run_quma:
+    #     quma_full_threaded(cell_types, filename)  # Changed for multiprocessing of quma
 
     dict_of_df: Dict[str, pd.DataFrame] = read_df_of_quma_results(filename)
 
     return dict_of_df
+    # return
 
 
 def read_df_of_quma_results(filename: str) -> Dict[str, pd.DataFrame]:

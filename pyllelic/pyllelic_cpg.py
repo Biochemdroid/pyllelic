@@ -223,16 +223,17 @@ def run_sam_and_extract_df(sams: Path, process: bool = True) -> pd.Index:
 #START HERE NEXT TIME!!!!!!
 #TRYING TO GET THESE Seq(v) into cpg.find_cpt()
     df2_dict = df2.to_dict()
+    return df3.index.unique()
 
-    dff = df2_dict['sequence'].items()
-    for k, v in dff:
-        print((Seq(v)))
-    # for i in df2_dict['sequence']:
-    #     print(df2_dict[i])
+"""Uncomment below to see individual sequences:"""
 
+    # dff = df2_dict['sequence'].items()
+    # for k, v in dff:
+    #     print((Seq(v)))
+
+        
     # return df2.index.unique()
-    return df3
-
+    
 
 
 
@@ -536,9 +537,9 @@ def run_cpg_and_compile_list_of_df(
     # if run_quma:
     #     quma_full_threaded(cell_types, filename)  # Changed for multiprocessing of quma
 
-    dict_of_df: Dict[str, pd.DataFrame] = read_df_of_quma_results(filename)
+    # dict_of_df: Dict[str, pd.DataFrame] = read_df_of_quma_results(filename)
 
-    return dict_of_df
+    # return dict_of_df
     # return
 
 
